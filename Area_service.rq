@@ -1,0 +1,41 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX gno: <http://www.geonames.org/ontology#>
+PREFIX gn: <http://geonames.org/> 
+PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX wd: <http://worldbank.org/> 
+PREFIX su: <http://purl.bioontology.org/ontology/MEDDRA/>
+PREFIX dbpont: <http://dbpedia.org/ontology/>
+PREFIX dbo: <http://dbpedia.org/resource/classes#>
+PREFIX onto: <http://data.ontotext.com/resource/leak/>
+
+SELECT DISTINCT ?country_code ?iso ?maxArea
+
+WHERE
+{
+    {
+        {
+            SELECT DISTINCT ?country_code
+            WHERE
+            {
+                ?country a gn:Country .
+                ?country db:Country ?country_code .
+            }
+        }
+        SERVICE <http://factforge.net/repositories/ff-news>
+        {
+            ?country_service a dbpont:Country .
+            ?country_service onto:countryCode ?iso.
+            {
+                SELECT ?iso (MAX(?area) AS ?maxArea)
+                WHERE
+                {
+                    ?country_service onto:countryCode ?iso .
+                    ?country_service dbpont:areaTotal ?area.
+                }
+                GROUP BY ?iso
+            }
+        }
+    }
+    FILTER(?iso=?country_code)
+}

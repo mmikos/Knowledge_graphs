@@ -1,0 +1,28 @@
+PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX econ: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#> 
+PREFIX wd: <http://worldbank.org/> 
+PREFIX su: <http://purl.bioontology.org/ontology/MEDDRA/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX gn: <http://geonames.org/> 
+
+SELECT DISTINCT
+?country ?suicideRate
+
+WHERE
+{
+    ?count a gn:Country .
+    ?count rdfs:label ?country .       
+    ?count db:year ?year.
+    
+    ?year wd:Year 2015 .           
+    ?year su:suicide ?suic.
+    ?suic rdfs:value  ?suicide .    
+    
+    ?year db:population ?pop.
+    ?pop rdfs:value ?population .
+    BIND((xsd:float(?suicide)*100/(xsd:float(?population))) AS ?suicideRate)
+} 
+
+ORDER BY desc (?suicideRate)
+LIMIT 10
