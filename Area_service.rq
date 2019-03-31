@@ -1,54 +1,53 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX gno: <http://www.geonames.org/ontology#>
-PREFIX gn: <http://geonames.org/> 
 PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX wd: <http://worldbank.org/> 
-PREFIX su: <http://purl.bioontology.org/ontology/MEDDRA/>
 PREFIX dbpont: <http://dbpedia.org/ontology/>
-PREFIX dbo: <http://dbpedia.org/resource/classes#>
+PREFIX dbo: <http://dbpedia.org/page/>
 PREFIX onto: <http://data.ontotext.com/resource/leak/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX gn: <http://www.geonames.org/ontology#>
 
-SELECT DISTINCT 
+SELECT DISTINCT
 ?country_name ?suicide
-(xsd:float(?population)*1000000/xsd:float(?maxArea) AS ?pop_per_km2)
+(xsd:float(?population)*1000000/xsd:double(?area) AS ?pop_per_km2)
 (xsd:float(?suicide*100)/100000 AS ?suicide_per_100000)
 
 WHERE
-{
-    {
+{  
         {
             SELECT DISTINCT ?country_code ?country_name ?suicide ?population
             WHERE
             {
-                ?country a gn:Country .
-                ?country db:Country ?country_code .
+                ?country a db:Country .
+                ?country gn:countryCode ?country_code .
                 ?country rdfs:label ?country_name .   
                 ?country db:year ?year.
-                ?year wd:Year 2014 .           
-                ?year su:suicide ?suic.
+                ?year rdfs:label 2014 .           
+                ?year dbo:Suicide ?suic.
                 ?suic rdfs:value  ?suicide .    
-                ?year db:population ?pop.
+                ?year dbo:Population ?pop.
                 ?pop rdfs:value ?population .
             }
-        }
+    }
+        
         SERVICE <http://factforge.net/repositories/ff-news>
         {
             ?country_service a dbpont:Country .
             ?country_service onto:countryCode ?iso.
-            {
-                SELECT ?iso (MAX(?area) AS ?maxArea)
-                WHERE
-                {
-                    ?country_service onto:countryCode ?iso .
-                    ?country_service dbpont:areaTotal ?area.
-                }
-                GROUP BY ?iso
-            }
+            ?country_service dbpont:areaTotal ?area.
+#            {
+#                SELECT ?iso (MAX(?area) AS ?maxArea)
+#                WHERE
+#                {
+#                    ?country_service onto:countryCode ?iso .
+#                    ?country_service dbpont:areaTotal ?area.
+#                }
+#                GROUP BY ?iso
+#            }
         }
-    }
+    
     FILTER(?iso=?country_code)
     FILTER(?suicide>10)
+    FILTER(regex(str(?country_service), "http://dbpedia.org/" ) )
 }
-ORDER BY DESC (?pop_per_m2)
+ORDER BY DESC (?pop_per_km2)

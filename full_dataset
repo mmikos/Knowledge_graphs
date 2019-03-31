@@ -1,10 +1,9 @@
 PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
-PREFIX econ: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#> 
-PREFIX wd: <http://worldbank.org/> 
-PREFIX su: <http://purl.bioontology.org/ontology/MEDDRA/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX gn: <http://geonames.org/> 
+PREFIX ncit: <https://ncim.nci.nih.gov/ncimbrowser/ConceptReport.jsp?dictionary=NCI%20Metathesaurus&type=synonym&code=>
+PREFIX gn: <http://www.geonames.org/ontology#>
+PREFIX dbo: <http://dbpedia.org/page/>
 
 SELECT DISTINCT  
 ?continent ?country 
@@ -15,35 +14,34 @@ SELECT DISTINCT
 
 WHERE 
 {
-    ?count a gn:Country .
+    ?count a db:Country .
     ?count rdfs:label ?country .
     ?count gn:Continent ?continent .
     
     ?count db:year ?year.
-    ?year wd:Year ?year_int.
+    ?year rdfs:label ?year_int.
            
-    ?year su:suicide ?suic.
+    ?year dbo:Suicide ?suic.
     ?suic rdfs:value  ?suicide .
     
-    ?year econ:temperature ?temp .
+    ?year dbo:Temperature ?temp .
     ?temp rdfs:value ?temperature .
-
-        
-    ?year econ:unemployment ?unem .
+       
+    ?year dbo:Unemployment ?unem .
     ?unem rdfs:value ?unemployment.
     
-    ?year econ:education ?edu.
+    ?year dbo:Education ?edu.
     ?edu rdfs:value ?education .
     
-    ?year econ:poverty ?pov.
+    ?year dbo:Poverty ?pov.
     ?pov rdfs:value ?poverty .
        
-    ?year db:GDP ?GDP .
+    ?year dbo:Gross_domestic_product ?GDP .
     ?GDP rdfs:value ?GDPpc .
         
-    ?year econ:migration ?mig.
+    ?year dbo:Migration ?mig.
     ?mig rdfs:value ?migration .
     
-    ?year db:population ?pop.
+    ?year dbo:Population ?pop.
     ?pop rdfs:value ?population .
 } 

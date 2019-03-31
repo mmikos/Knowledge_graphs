@@ -1,23 +1,24 @@
 PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
+PREFIX dbo: <http://dbpedia.org/page/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
-PREFIX wd: <http://worldbank.org/> 
-PREFIX su: <http://purl.bioontology.org/ontology/MEDDRA/>
+PREFIX ncit: <https://ncim.nci.nih.gov/ncimbrowser/ConceptReport.jsp?dictionary=NCI%20Metathesaurus&type=synonym&code=>
+PREFIX gn: <http://www.geonames.org/ontology#>
 
 INSERT 
 {
-    ?year su:suicide ?suicide
+    ?year dbo:Suicide ?suicide
 }
 
 WHERE 
 {     
-    ?suicide a su:10042462 .
+    ?suicide a ncit:C0038661 .
     ?suicide rdfs:value ?suicide_val .
-    ?suicide db:Country ?suicide_country .
+    ?suicide gn:countryCode ?suicide_country .
     ?suicide db:Year ?suicide_year .
     
     ?year a db:Year .
-    ?year db:Country ?year_country .
-    ?year wd:Year ?year_val .
+    ?year gn:countryCode ?year_country .
+    ?year rdfs:label ?year_val .
 
     FILTER(?suicide_year=?year_val)   
     FILTER(?suicide_country=?year_country) 

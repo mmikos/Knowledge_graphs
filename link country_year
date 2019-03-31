@@ -1,24 +1,21 @@
 PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
-PREFIX gn: <http://geonames.org/> 
-PREFIX wd: <http://worldbank.org/> 
-PREFIX su: <http://purl.bioontology.org/ontology/MEDDRA/>
+PREFIX gn: <http://www.geonames.org/ontology#> 
 
 INSERT
 {
-	?country db:year ?year
+ ?country db:year ?year
 }
-
 WHERE 
 { 
-    ?country a gn:Country .
-    ?country db:Country ?country_code .
+    ?country a db:Country .
+    ?country gn:countryCode ?country_code .
     ?country rdfs:label ?country_name .
     
     ?year a db:Year .
-    ?year db:Country ?year_code .
-    ?year db:Name ?year_country .
+    ?year gn:countryCode ?year_code .
+  	?year db:Country ?year_country .
+    ?year rdfs:label ?year_label .
     
     FILTER(?country_code=?year_code)
-    FILTER(?country_name=?year_country)   
 }

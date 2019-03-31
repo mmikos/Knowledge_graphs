@@ -5,10 +5,11 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix db: <http://mappings.dbpedia.org/server/ontology/classes/> .
-@prefix wd: <http://worldbank.org/> .
-@prefix econ: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#> .
-@prefix su: <http://purl.bioontology.org/ontology/MEDDRA/> .
-@prefix gn: <http://geonames.org/> .
+#@prefix wd: <http://worldbank.org/> .
+#@prefix econ: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#> .
+@prefix ncit: <https://ncim.nci.nih.gov/ncimbrowser/ConceptReport.jsp?dictionary=NCI%20Metathesaurus&type=synonym&code=>.
+#@prefix su: <http://purl.bioontology.org/ontology/MEDDRA/> .
+@prefix gn: <http://www.geonames.org/ontology#> .
 @base <https://github.com/mmikos/knowledge_graphs/> .
 
 
@@ -24,12 +25,12 @@
     # Define the subject of the generated statements
     rr:subjectMap [
         rr:template "http://geonames.org/countries/{codecountry}/{country}.html";
-        rr:class gn:Country
+        rr:class db:Country
     ];
 
     # Link to the country code (ISO3)
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "codecountry"
         ]
@@ -43,28 +44,18 @@
         ]
     ];
 
-    # Show the country name
-    rr:predicateObjectMap [ 
-        rr:predicate db:Name;
-        rr:objectMap [ 
-            rml:reference "country";
-            rr:language "en"
-        ]
-    ];
-
 
 # Generate a URI for the continent object
 rr:predicateObjectMap [
-  rr:predicate gn:Continent ;
-  rr:objectMap [ rr:template "http://geonames.org/continent/{continent}" ]
+  rr:predicate db:Continent ;
+  rr:objectMap [ rr:template "http://dbpedia.org/page/{continent}" ]
 ] ;
 
    # Link to the continent
     rr:predicateObjectMap [ 
-        rr:predicate db:Continent;
+        rr:predicate gn:Continent;
         rr:objectMap [ 
             rml:reference "continent";
-            rr:language "en"
         ]
     ];
 
@@ -97,30 +88,22 @@ rr:predicateObjectMap [
     rr:predicateObjectMap [ 
         rr:predicate rdfs:label;
         rr:objectMap [ 
-            rml:reference "year"
+            rml:reference "year";
+            rr:datatype xsd:integer  
         ]
     ];
     # Link the ocuntry code
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "codecountry"
         ]
     ];
     # Show the country name
     rr:predicateObjectMap [ 
-        rr:predicate db:Name;
+        rr:predicate db:Country;
         rr:objectMap [ 
             rml:reference "country";
-        ]
-    ];
-
-    # Link to the year 
-    rr:predicateObjectMap [ 
-        rr:predicate wd:Year ;
-        rr:objectMap [ 
-            rml:reference "year";
-            rr:datatype xsd:integer  
         ]
     ].
 
@@ -137,13 +120,13 @@ rr:predicateObjectMap [
     # Generate a URI for temperature
     rr:subjectMap [ 
         rr:template "http://worldbank.org/Temperature/{ISO3}/{Year}";
-        rr:class econ:C25206;
+        rr:class ncit:C0039476;
     ];
 
 
    # Link to ISO3
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "ISO3";
         ]
@@ -191,7 +174,7 @@ rr:predicateObjectMap [
      # Define the subject of the generated statements
     rr:subjectMap [ 
     rr:template "https://www.who.int/mental_health/prevention/suicide/{codecountry}/{year}" ;
-    rr:class su:10042462
+    rr:class ncit:C0038661
     ];
 
 
@@ -207,7 +190,7 @@ rr:predicateObjectMap [
 
    # Link to country code
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "codecountry";
         ]
@@ -245,7 +228,7 @@ rr:predicateObjectMap [
     # Generate a URI for unemployment
     rr:subjectMap [ 
         rr:template "http://worldbank.org/Unemployment/{countrycode}/{time}";
-        rr:class econ:C0041674 
+        rr:class ncit:C0041674 
     ];
 
 
@@ -261,7 +244,7 @@ rr:predicateObjectMap [
     
    # Show the country name
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "countrycode";
         ]
@@ -297,13 +280,13 @@ rr:predicateObjectMap [
     # Generate a URI for education
     rr:subjectMap [ 
         rr:template "http://worldbank.org/Education/{countrycode}/{time}";
-        rr:class econ:C17953;
+        rr:class ncit:C0013658;
     ];
 
 
    # Link to ISO3
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "countrycode";
         ]
@@ -350,7 +333,7 @@ rr:predicateObjectMap [
     # Generate a URI for poverty
     rr:subjectMap [ 
         rr:template "http://worldbank.org/PovertyRatio/{countrycode}/{time}";
-        rr:class econ:C17009
+        rr:class ncit:C0032854
     ];
 
     # Map the year name to rdfs:label
@@ -364,7 +347,7 @@ rr:predicateObjectMap [
 
    # Link to the country
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "countrycode";
         ]
@@ -401,7 +384,7 @@ rr:predicateObjectMap [
     # Generate a URI for netmigration
     rr:subjectMap [ 
         rr:template "http://worldbank.org/NetMigration/{countrycode}/{time}";
-        rr:class econ:C15422
+        rr:class ncit:C0237731
     ];
 
     # Map the year name to rdfs:label
@@ -415,7 +398,7 @@ rr:predicateObjectMap [
 
    # Link to country code
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "countrycode";
         ]
@@ -465,7 +448,7 @@ rr:predicateObjectMap [
 
    # Link to ISO3
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "countrycode";
         ]
@@ -515,7 +498,7 @@ rr:predicateObjectMap [
 
    # Show the country 
     rr:predicateObjectMap [ 
-        rr:predicate db:Country;
+        rr:predicate gn:countryCode;
         rr:objectMap [ 
             rml:reference "countrycode";
         ]
