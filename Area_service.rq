@@ -8,18 +8,29 @@ PREFIX su: <http://purl.bioontology.org/ontology/MEDDRA/>
 PREFIX dbpont: <http://dbpedia.org/ontology/>
 PREFIX dbo: <http://dbpedia.org/resource/classes#>
 PREFIX onto: <http://data.ontotext.com/resource/leak/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-SELECT DISTINCT ?country_code ?iso ?maxArea
+SELECT DISTINCT 
+?country_name ?suicide
+(xsd:float(?population)*1000000/xsd:float(?maxArea) AS ?pop_per_km2)
+(xsd:float(?suicide*100)/100000 AS ?suicide_per_100000)
 
 WHERE
 {
     {
         {
-            SELECT DISTINCT ?country_code
+            SELECT DISTINCT ?country_code ?country_name ?suicide ?population
             WHERE
             {
                 ?country a gn:Country .
                 ?country db:Country ?country_code .
+                ?country rdfs:label ?country_name .   
+                ?country db:year ?year.
+                ?year wd:Year 2014 .           
+                ?year su:suicide ?suic.
+                ?suic rdfs:value  ?suicide .    
+                ?year db:population ?pop.
+                ?pop rdfs:value ?population .
             }
         }
         SERVICE <http://factforge.net/repositories/ff-news>
@@ -38,4 +49,6 @@ WHERE
         }
     }
     FILTER(?iso=?country_code)
+    FILTER(?suicide>10)
 }
+ORDER BY DESC (?pop_per_m2)

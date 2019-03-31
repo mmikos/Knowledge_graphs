@@ -1,0 +1,24 @@
+PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX wd: <http://worldbank.org/> 
+PREFIX su: <http://purl.bioontology.org/ontology/MEDDRA/>
+
+INSERT 
+{
+    ?year su:suicide ?suicide
+}
+
+WHERE 
+{     
+    ?suicide a su:10042462 .
+    ?suicide rdfs:value ?suicide_val .
+    ?suicide db:Country ?suicide_country .
+    ?suicide db:Year ?suicide_year .
+    
+    ?year a db:Year .
+    ?year db:Country ?year_country .
+    ?year wd:Year ?year_val .
+
+    FILTER(?suicide_year=?year_val)   
+    FILTER(?suicide_country=?year_country) 
+} 

@@ -6,8 +6,9 @@ PREFIX su: <http://purl.bioontology.org/ontology/MEDDRA/>
 
 INSERT
 {
- ?country db:year ?year
+	?country db:year ?year
 }
+
 WHERE 
 { 
     ?country a gn:Country .
