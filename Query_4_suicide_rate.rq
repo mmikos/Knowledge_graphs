@@ -1,0 +1,24 @@
+PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX gn: <http://www.geonames.org/ontology#>
+PREFIX dbo: <http://dbpedia.org/page/>
+
+SELECT DISTINCT
+?country ?suicideRate
+WHERE
+{
+    ?count a db:Country .
+    ?count rdfs:label ?country .       
+    ?count db:year ?year.
+    
+    ?year rdfs:label 2014 .           
+    ?year dbo:Suicide ?suic.
+    ?suic rdfs:value  ?suicide .    
+    
+    ?year dbo:Population ?pop.
+    ?pop rdfs:value ?population .
+    BIND((xsd:float(?suicide)*100/(xsd:float(?population))) AS ?suicideRate)
+} 
+ORDER BY desc (?suicideRate)
+LIMIT 10

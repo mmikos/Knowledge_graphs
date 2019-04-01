@@ -1,0 +1,522 @@
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix db: <http://mappings.dbpedia.org/server/ontology/classes/> .
+@prefix ncit: <https://ncim.nci.nih.gov/ncimbrowser/ConceptReport.jsp?dictionary=NCI%20Metathesaurus&type=synonym&code=>.
+@prefix gn: <http://www.geonames.org/ontology#> .
+@base <https://github.com/mmikos/knowledge_graphs/> .
+
+
+<CountryTriple>
+    a rr:TriplesMap;
+
+    # Define the data source for extracting country information
+   rml:logicalSource [
+        rml:source "//Users/martynamikos/Desktop/BMKG/project/whosuicide.csv";
+        rml:referenceFormulation ql:CSV
+    ];
+   
+    # Define the subject of the generated statements
+    rr:subjectMap [
+        rr:template "http://geonames.org/countries/{codecountry}/{country}.html";
+        rr:class db:Country
+    ];
+
+    # Link to the country code (ISO3)
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "codecountry"
+        ]
+    ];
+
+    # Map the country name to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rml:reference "country"
+        ]
+    ];
+
+
+# Generate a URI for the continent object
+rr:predicateObjectMap [
+  rr:predicate db:Continent;
+  rr:objectMap [ rr:template "http://dbpedia.org/page/{continent}" ]
+] ;
+
+   # Link to the continent
+    rr:predicateObjectMap [ 
+        rr:predicate ncit:C0454690;
+        rr:objectMap [ 
+            rml:reference "continent";
+        ]
+    ];
+
+        # Link to the year 
+    rr:predicateObjectMap [ 
+        rr:predicate db:Year ;
+        rr:objectMap [ 
+            rml:reference "year";
+            rr:datatype xsd:integer  
+        ]
+    ].
+
+<YearTriple>
+    a rr:TriplesMap;
+
+    # Define the data source for the year
+   rml:logicalSource [
+        rml:source "//Users/martynamikos/Desktop/BMKG/project/whosuicide.csv";
+        rml:referenceFormulation ql:CSV
+    ];
+
+
+     # Define the subject of the generated statements
+    rr:subjectMap [ 
+    rr:template "http://dbpedia.org/page/{year}/{codecountry}";
+    rr:class db:Year
+    ];
+
+    # Map the year to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rml:reference "year";
+            rr:datatype xsd:integer  
+        ]
+    ];
+    # Link the ocuntry code
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "codecountry"
+        ]
+    ];
+    # Show the country name
+    rr:predicateObjectMap [ 
+        rr:predicate db:Country;
+        rr:objectMap [ 
+            rml:reference "country";
+        ]
+    ].
+
+    <TemperatureTriple>
+    a rr:TriplesMap;
+  
+      # Define the data source for the temperature data
+
+  rml:logicalSource [
+    rml:source "//Users/martynamikos/Desktop/BMKG/project/temperaturedata.csv";
+    rml:referenceFormulation ql:CSV
+  ];
+
+    # Generate a URI for temperature
+    rr:subjectMap [ 
+        rr:template "http://climatedataapi.worldbank.org/climateweb/rest/v1/country/annualavg/tas/{Year}/{Year}/{ISO3}";
+        rr:class ncit:C0039476;
+    ];
+
+   # Link to ISO3
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "ISO3";
+        ]
+    ];
+
+
+    # Link to the year 
+    rr:predicateObjectMap [ 
+        rr:predicate db:Year ;
+        rr:objectMap [ 
+            rml:reference "Year";
+            rr:datatype xsd:integer  
+        ]
+    ];
+
+    # Map the name to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rr:template "Temperature in {Year}";
+            rr:termType rr:Literal;
+        ]
+    ];
+
+
+    # Link to the temperature 
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:value;
+        rr:objectMap [ 
+            rml:reference "temperature";
+            rr:datatype xsd:float  
+        ]
+    ].
+
+<SuicideTriple>
+    a rr:TriplesMap;
+
+    # Define the data source for suicide data
+   rml:logicalSource [
+        rml:source "//Users/martynamikos/Desktop/BMKG/project/whosuicide.csv";
+        rml:referenceFormulation ql:CSV
+    ];
+
+
+     # Define the subject of the generated statements
+    rr:subjectMap [ 
+    rr:template "http://apps.who.int/gho/athena/api/GHO/SA_0000001400_ARCHIVED?filter=COUNTRY:{codecountry};YEAR:{year}" ;
+    rr:class ncit:C0038661
+    ];
+
+
+    # Map the name to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rr:template "Suicide in {year}";
+            rr:termType rr:Literal;
+        ]
+    ];
+
+
+   # Link to country code
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "codecountry";
+        ]
+    ];
+
+
+    # Link to the year 
+    rr:predicateObjectMap [ 
+        rr:predicate db:Year ;
+        rr:objectMap [ 
+            rml:reference "year";
+            rr:datatype xsd:integer  
+        ]
+    ];
+
+    # Define the object of the suicide property as an integer
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:value;
+        rr:objectMap [ 
+            rml:reference "suicides_no"; 
+            rr:datatype xsd:integer 
+        ]
+
+    ].
+
+
+<UnemploymentTriple>
+    a rr:TriplesMap;
+    
+  rml:logicalSource [
+    rml:source "//Users/martynamikos/Desktop/BMKG/project/worldbank.csv";
+    rml:referenceFormulation ql:CSV
+  ];
+
+    # Generate a URI for unemployment
+    rr:subjectMap [ 
+        rr:template "http://api.worldbank.org/v2/country/{countrycode}/indicator/SL.UEM.TOTL.NE.ZS?format=json&date={time}";
+        rr:class ncit:C0041674 
+    ];
+
+
+
+
+    # Map the year name to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rr:template "Unemployment in {time}";
+            rr:termType rr:Literal;
+        ]
+    ];
+
+    
+   # Show the country name
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "countrycode";
+        ]
+    ];
+
+
+    # Link to the year 
+    rr:predicateObjectMap [ 
+        rr:predicate db:Year ;
+        rr:objectMap [ 
+            rml:reference "time";
+            rr:datatype xsd:integer  
+        ]
+    ];
+
+    # Define the object of the uneployment property as float
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:value;
+        rr:objectMap [ 
+            rml:reference "Unemployment";
+            rr:datatype xsd:float  
+        ]
+    ].
+
+<EducationTriple>
+    a rr:TriplesMap;
+    
+  rml:logicalSource [
+    rml:source "//Users/martynamikos/Desktop/BMKG/project/worldbank.csv";
+    rml:referenceFormulation ql:CSV
+  ];
+
+    # Generate a URI for education
+    rr:subjectMap [ 
+        rr:template "http://api.worldbank.org/v2/country/{countrycode}/indicator/SE.SEC.CUAT.UP.ZS?format=json&date={time}";
+        rr:class ncit:C0013658;
+    ];
+
+
+   # Link to ISO3
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "countrycode";
+        ]
+    ];
+
+
+    # Link to the year 
+    rr:predicateObjectMap [ 
+        rr:predicate db:Year ;
+        rr:objectMap [ 
+            rml:reference "time";
+            rr:datatype xsd:integer  
+        ]
+    ];
+
+    # Map the name to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rr:template "Education in {time}";
+            rr:termType rr:Literal;
+        ]
+    ];
+
+
+    # Define the object of the education property as float
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:value;
+        rr:objectMap [ 
+            rml:reference "Education";
+            rr:datatype xsd:float  
+        ]
+    ].
+
+
+<PovertyRatioTriple>
+    a rr:TriplesMap;
+    
+  rml:logicalSource [
+    rml:source "//Users/martynamikos/Desktop/BMKG/project/worldbank.csv";
+    rml:referenceFormulation ql:CSV
+  ];
+
+    # Generate a URI for poverty
+    rr:subjectMap [ 
+        rr:template "http://api.worldbank.org/v2/country/{countrycode}/indicator/SI.POV.NAHC?format=json&date={time}";
+        rr:class ncit:C0032854
+    ];
+
+    # Map the year name to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rr:template "PovertyRatio in {time}";
+            rr:termType rr:Literal;
+        ]
+    ];
+
+   # Link to the country
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "countrycode";
+        ]
+    ];
+
+
+    # Link to the year 
+    rr:predicateObjectMap [ 
+        rr:predicate db:Year ;
+        rr:objectMap [ 
+            rml:reference "time";
+            rr:datatype xsd:integer  
+        ]
+    ];
+
+    # Define the object of the poverty property as float
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:value;
+        rr:objectMap [ 
+            rml:reference "PovertyRatio";
+            rr:datatype xsd:float  
+        ]
+
+    ].
+
+<NetMigrationTriple>
+    a rr:TriplesMap;
+    
+  rml:logicalSource [
+    rml:source "//Users/martynamikos/Desktop/BMKG/project/worldbank.csv";
+    rml:referenceFormulation ql:CSV
+  ];
+
+    # Generate a URI for netmigration
+    rr:subjectMap [ 
+        rr:template "http://api.worldbank.org/v2/country/{countrycode}/indicator/SM.POP.NETM?format=json&date={time}";
+        rr:class ncit:C0237731
+    ];
+
+    # Map the year name to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rr:template "NetMigration in {time}";
+            rr:termType rr:Literal;
+        ]
+    ];
+
+   # Link to country code
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "countrycode";
+        ]
+    ];
+
+
+    # Link to the year 
+    rr:predicateObjectMap [ 
+        rr:predicate db:Year ;
+        rr:objectMap [ 
+            rml:reference "time";
+            rr:datatype xsd:integer  
+        ]
+    ];
+
+    # Define the object of the migration property as float 
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:value;
+        rr:objectMap [ 
+            rml:reference "NetMigration";
+            rr:datatype xsd:float  
+        ]
+    ].
+
+<GDPTriple>
+    a rr:TriplesMap;
+    
+  rml:logicalSource [
+    rml:source "//Users/martynamikos/Desktop/BMKG/project/worldbank.csv";
+    rml:referenceFormulation ql:CSV
+  ];
+
+    # Generate a URI for GDP pc
+    rr:subjectMap [ 
+        rr:template "http://api.worldbank.org/v2/country/{countrycode}/indicator/NY.GDP.PCAP.PP.CD?format=json&date={time}";
+        rr:class db:GrossDomesticProductPerCapita
+    ]; 
+
+    # Map the year name to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rr:template "GDPPerCapita in {time}";
+            rr:termType rr:Literal;
+        ]
+    ];
+
+   # Link to ISO3
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "countrycode";
+        ]
+    ];
+
+
+    # Link to the year 
+    rr:predicateObjectMap [ 
+        rr:predicate db:Year ;
+        rr:objectMap [ 
+            rml:reference "time";
+            rr:datatype xsd:integer  
+        ]
+    ];
+
+       # Define the object of the GDP property as float
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:value;
+        rr:objectMap [ 
+            rml:reference "GDPpc";
+            rr:datatype xsd:float  
+        ]
+    ].
+
+<PopulationTriple>
+    a rr:TriplesMap;
+    
+  rml:logicalSource [
+    rml:source "//Users/martynamikos/Desktop/BMKG/project/worldbank.csv";
+    rml:referenceFormulation ql:CSV
+  ];
+
+    # Generate a URI for populations
+    rr:subjectMap [ 
+        rr:template "http://api.worldbank.org/v2/country/{countrycode}/indicator/SP.POP.TOTL?format=json&date={time}";
+        rr:class db:Population
+    ];
+
+    # Map the year name to rdfs:label
+    rr:predicateObjectMap [ 
+        rr:predicate rdfs:label;
+        rr:objectMap [ 
+            rr:template "Population in {time}";
+            rr:termType rr:Literal;
+        ]
+    ];
+
+   # Show the country 
+    rr:predicateObjectMap [ 
+        rr:predicate gn:countryCode;
+        rr:objectMap [ 
+            rml:reference "countrycode";
+        ]
+    ];
+
+
+    # Link to the year 
+    rr:predicateObjectMap [ 
+        rr:predicate db:Year ;
+        rr:objectMap [ 
+            rml:reference "time";
+            rr:datatype xsd:integer  
+        ]
+    ];
+
+    #Define the object of the population property as float
+     rr:predicateObjectMap [ 
+        rr:predicate rdfs:value;
+        rr:objectMap [ 
+            rml:reference "population"; 
+            rr:datatype xsd:float  
+        ]
+    ].

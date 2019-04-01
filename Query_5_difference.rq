@@ -1,0 +1,42 @@
+PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX gn: <http://www.geonames.org/ontology#>
+PREFIX dbo: <http://dbpedia.org/page/>
+
+SELECT DISTINCT
+?country
+((?suicide2007-?suicide2015) AS ?suicide_2007_2015_difference)
+((?unemployment2007-?unemployment2015) AS ?unemployment_2007_2015_difference)
+((?GDPpc2007-?GDPpc2015) AS ?GDPpc_2007_2015_difference)
+((?temperature2007-?temperature2015) AS ?temperature_2007_2015_difference)
+{
+    ?count a db:Country .
+    ?count rdfs:label ?country .       
+    ?count db:year ?year7.
+    ?count db:year ?year15.
+    
+    ?year7 rdfs:label 2007 .
+    ?year15 rdfs:label 2015 .
+    ?year7 dbo:Suicide ?suic7.
+    ?year15 dbo:Suicide ?suic15.
+	?suic7 rdfs:value ?suicide2007 .
+    ?suic15 rdfs:value ?suicide2015 .
+        
+    ?year7 dbo:Unemployment ?unem7 .
+    ?year15 dbo:Unemployment ?unem15 .
+    ?unem7 rdfs:value ?unemployment2007.
+    ?unem15 rdfs:value ?unemployment2015.
+    
+    ?year7 dbo:Gross_domestic_product ?GDP7 .
+    ?year15 dbo:Gross_domestic_product ?GDP15 .
+    ?GDP7 rdfs:value ?GDPpc2007 .
+    ?GDP15 rdfs:value ?GDPpc2015 .
+    
+    ?year7 dbo:Temperature ?temp7 .
+    ?year15 dbo:Temperature ?temp15 .
+    ?temp7 rdfs:value ?temperature2007 .
+    ?temp15 rdfs:value ?temperature2015 .
+} 
+ORDER BY DESC (?suicide2007)
+LIMIT 10

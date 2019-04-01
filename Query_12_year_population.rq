@@ -1,0 +1,21 @@
+PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX gn: <http://www.geonames.org/ontology#>
+PREFIX dbo: <http://dbpedia.org/page/>
+
+insert {
+ ?year dbo:Population ?population
+}
+where { 
+    ?population a db:Population .
+    ?population rdfs:value ?population_val .
+    ?population gn:countryCode ?country_population.
+    ?population db:Year ?population_year .
+
+    ?year a db:Year .
+    ?year gn:countryCode ?year_country .
+    ?year rdfs:label ?year_val .
+
+    FILTER(?population_year=?year_val)   
+    FILTER(?country_population=?year_country) 
+} 

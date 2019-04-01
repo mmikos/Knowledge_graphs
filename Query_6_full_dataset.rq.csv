@@ -1,0 +1,47 @@
+PREFIX db: <http://mappings.dbpedia.org/server/ontology/classes/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ncit: <https://ncim.nci.nih.gov/ncimbrowser/ConceptReport.jsp?dictionary=NCI%20Metathesaurus&type=synonym&code=>
+PREFIX gn: <http://www.geonames.org/ontology#>
+PREFIX dbo: <http://dbpedia.org/page/>
+
+SELECT DISTINCT  
+?continent ?country 
+?year_int ?suicide 
+?temperature ?unemployment 
+?education ?poverty 
+?GDPpc ?migration ?population
+
+WHERE 
+{
+    ?count a db:Country .
+    ?count rdfs:label ?country .
+    ?count gn:Continent ?continent .
+    
+    ?count db:year ?year.
+    ?year rdfs:label ?year_int.
+           
+    ?year dbo:Suicide ?suic.
+    ?suic rdfs:value  ?suicide .
+    
+    ?year dbo:Temperature ?temp .
+    ?temp rdfs:value ?temperature .
+       
+    ?year dbo:Unemployment ?unem .
+    ?unem rdfs:value ?unemployment.
+    
+    ?year dbo:Education ?edu.
+    ?edu rdfs:value ?education .
+    
+    ?year dbo:Poverty ?pov.
+    ?pov rdfs:value ?poverty .
+       
+    ?year dbo:Gross_domestic_product ?GDP .
+    ?GDP rdfs:value ?GDPpc .
+        
+    ?year dbo:Migration ?mig.
+    ?mig rdfs:value ?migration .
+    
+    ?year dbo:Population ?pop.
+    ?pop rdfs:value ?population .
+} 
